@@ -1,7 +1,15 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
-import { Resolver, Query, buildSchema, Arg, Int } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  buildSchema,
+  Arg,
+  Int,
+  ObjectType,
+  Field,
+} from "type-graphql";
 
 const getLongestRaisingSequence = (nums: number[]) => {
   if (!nums.length) return [];
@@ -10,7 +18,7 @@ const getLongestRaisingSequence = (nums: number[]) => {
   let res: number[] = [];
 
   for (let i = 1; i < nums.length; i++) {
-    if (nums[i - 1] <= nums[i]) temp.push(nums[i]);
+    if (nums[i - 1] < nums[i]) temp.push(nums[i]);
     else {
       if (temp.length > res.length) res = temp;
       temp = [nums[i]];
@@ -22,11 +30,13 @@ const getLongestRaisingSequence = (nums: number[]) => {
   return res;
 };
 
+console.log(getLongestRaisingSequence([2, 2, 1]));
+
 @Resolver()
 class MyResolver {
   @Query(() => [Int])
-  longestRaisingSequence(@Arg("nums", () => [Int]) nums: number[]) {
-    return getLongestRaisingSequence(nums);
+  longestRaisingSequence(@Arg("sequence", () => [Int]) sequence: number[]) {
+    return getLongestRaisingSequence(sequence);
   }
 }
 
